@@ -26,6 +26,11 @@ class AppSettings(BaseConfig):
     port: int
 
 
+class CentrifugoSettings(BaseConfig):
+    api_url: str
+    api_key: str
+
+
 # Настройки всего приложения
 class Settings(BaseConfig):
     model_config = SettingsConfigDict(
@@ -34,11 +39,9 @@ class Settings(BaseConfig):
         env_nested_delimiter='__',  # позволяет задать настройки вложенным сущностям (например, APP__HOST) 
     )
 
-    llm_model: str = 'gemma2:9b'
-    llm_service_url: str = 'http://localhost:11434'
-
     app: AppSettings
     swagger: SwaggerSettings = SwaggerSettings()
+    centrifugo: CentrifugoSettings
 
 
 # Функция для создания настроек (подгрузит данные из .env)
