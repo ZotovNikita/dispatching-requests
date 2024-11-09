@@ -1,17 +1,13 @@
-# Используем официальный образ Python
-FROM python:3.12.5
+FROM python:3.12.5-slim-bookworm
 
-# Установим рабочую директорию
-WORKDIR ./backend
+RUN apt-get update && \
+    apt-get install -y python3 python3-pip
 
-# Скопируем файлы зависимостей в рабочую директорию
-COPY requirements.txt requirements.txt
+WORKDIR /backend
 
-# Установим зависимости
-RUN pip install --no-cache-dir -r requirements.txt
+COPY ./requirements.txt ./requirements.txt
+RUN pip install --no-cache-dir -r ./requirements.txt
 
-# Скопируем все остальные файлы проекта в рабочую директорию
-COPY . .
+COPY ./backend .
 
-# Укажем команду для запуска приложения Streamlit
 CMD ["python", "-m", "src"]

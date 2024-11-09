@@ -1,8 +1,11 @@
 services:
-  api:
+  dr_backend:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: ./Dockerfile
+    container_name: dr_backend
+    restart: always
     ports:
-      - "8558:8501"
-
+      - "8558:${APP__PORT}"
+    env_file:
+      - ./backend/.env
