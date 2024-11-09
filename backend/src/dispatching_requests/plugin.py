@@ -17,6 +17,7 @@ class Email(BaseModel):
 class DispatcherRequest(BaseModel):
     serial_number: str
     type_of_equipment: str
+    fail_point: str
 
 
 async def dispatching_requests_plugin(settings: Settings) -> AsyncGenerator:
@@ -38,7 +39,8 @@ async def dispatching_requests_plugin(settings: Settings) -> AsyncGenerator:
     async def message(request: Email) -> DispatcherRequest:
         return DispatcherRequest(
             serial_number='123',
-            type_of_equipment='popa'
+            type_of_equipment='popa',
+            fail_point='хуй'
         )
 
     yield
