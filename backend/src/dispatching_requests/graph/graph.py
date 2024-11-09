@@ -11,11 +11,11 @@ def graph_initialize(workflow: StateGraph) -> CompiledStateGraph:
     workflow.add_node('equipment_name_check', equipment_name_check)
     workflow.add_node('checks_inspection', checks_inspection)
 
+    workflow.add_edge(START, 'serial_number_check')
+    workflow.add_edge(START, 'equipment_name_check')
     workflow.add_edge(START, 'classification')
 
-    workflow.add_edge('classification', 'serial_number_check')
     workflow.add_edge('classification', 'completeness_check')
-    workflow.add_edge('classification', 'equipment_name_check')
 
     workflow.add_edge(['serial_number_check', 'completeness_check', 'equipment_name_check'], 'checks_inspection')
 

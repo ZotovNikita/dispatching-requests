@@ -1,18 +1,57 @@
-from ..models import ClassificationResult, CheckSerialNumberResult, CheckCompletenessResult, CheckEquipmentNameResult, EmailEvent
-from .state import State
+import asyncio
+
+import ujson
 from src.utils.ner import get_all_serial_numbers
+from src.utils.nlu import (
+    generate_prediction_equipment_type,
+    generate_prediction_failure_point,
+    tokenizer,
+    model_embedding,
+    model_classification_equipment_type,
+    label_encoder,
+    model_classification_failure_point,
+)
+from src.utils.check_complete_information import check_complete_information
+from src.utils.check_equipment_name import check_equipment_name
+from ..models import (
+    ClassificationResult,
+    CheckSerialNumberResult,
+    CheckCompletenessResult,
+    CheckEquipmentNameResult,
+    EmailEvent,
+)
+from .state import State
 
 
 async def email_classification(state: State):
     email = state['email']
 
-    cls1 = email.title
-    cls2 = 'cls2'
+    loop = asyncio.get_running_loop()
+
+    equipment_type = await loop.run_in_executor(
+        None,
+        generate_prediction_equipment_type,
+        email.title,
+        email.body,
+        model_embedding,
+        tokenizer,
+        model_classification_equipment_type,
+    )
+    point_of_failure = await loop.run_in_executor(
+        None,
+        generate_prediction_failure_point,
+        email.title,
+        email.body,
+        model_embedding,
+        tokenizer,
+        model_classification_failure_point,
+        label_encoder,
+    )
 
     return {
         'classification_result': ClassificationResult(
-            equipment_type=cls1,
-            point_of_failure=cls2,
+            equipment_type=equipment_type,
+            point_of_failure=point_of_failure,
         ),
     }
 
@@ -22,7 +61,8 @@ async def serial_number_check(state: State):
 
     default_value = 'Уточнить'
 
-    ners = get_all_serial_numbers(
+    ners = await asyncio.to_thread(
+        get_all_serial_numbers,
         header=email.title,
         body=email.body,
         default_value=default_value,
@@ -30,9 +70,9 @@ async def serial_number_check(state: State):
 
     return {
         'serial_number_check_result': CheckSerialNumberResult(
-            success=default_value in ners,
+            success=default_value not in ners,
             data=ners,
-            text='1',
+            text='Необходимо указать серийные номера.',
         ),
     }
 
@@ -41,30 +81,51 @@ async def completeness_check(state: State):
     email = state['email']
     classification_result = state['classification_result']
 
-    s = True
-    d = 'data'
+    llm_answer = await check_complete_information(
+        title=email.title,
+        body=email.body,
+        type_of_equipment=classification_result.equipment_type,
+        fail_point=classification_result.point_of_failure,
+    )
+    data = {
+        'flag': True,
+        'answer': '',
+    }
+
+    try:
+        data = ujson.loads(llm_answer)
+    except:
+        pass
 
     return {
         'completeness_check_result': CheckCompletenessResult(
-            success=s,
-            data=d,
-            text='2',
+            success=data.get('flag', True),
+            text=data.get('answer', ''),
         ),
     }
 
 
 async def equipment_name_check(state: State):
     email = state['email']
-    classification_result = state['classification_result']
 
-    s = True
-    d = 'data'
+    llm_answer = await check_equipment_name(
+        title=email.title,
+        body=email.body,
+    )
+    data = {
+        'flag': True,
+        'answer': '',
+    }
+
+    try:
+        data = ujson.loads(llm_answer)
+    except:
+        pass
 
     return {
         'equipment_name_check_result': CheckEquipmentNameResult(
-            success=s,
-            data=d,
-            text='3',
+            success=data.get('flag', True),
+            text=data.get('answer', ''),
         ),
     }
 
