@@ -23,6 +23,22 @@ services:
               count: 1
               capabilities: [gpu]
 
+  centrifugo:
+    image: centrifugo/centrifugo:v5.4.7
+    container_name: centrifugo
+    restart: always
+    volumes:
+      - ./cent_config.json:/centrifugo/config.json
+    command: centrifugo -c config.json
+    ports:
+      - ${CENTRIFUGO_PORT}:8000
+    ulimits:
+      nofile:
+        soft: 65535
+        hard: 65535
+    networks:
+      - sila-net
+
   backend:
     build:
       context: .
@@ -35,10 +51,13 @@ services:
       - APP__TITLE=${BACKEND_TITLE}
       - APP__HOST=${BACKEND_HOST}
       - APP__PORT=${BACKEND_PORT}
+      - CENTRIFUGO__API_URL=${CENTRIFUGO_API_URL}
+      - CENTRIFUGO__API_KEY=${CENTRIFUGO_API_KEY}
     env_file:
       - .env
     depends_on:
       - ollama
+      - centrifugo
     networks:
       - sila-net
 

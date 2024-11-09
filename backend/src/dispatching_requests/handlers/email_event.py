@@ -15,11 +15,9 @@ class EmailEventHandler(IEventHandler):
         self._cent_client = cent_client
 
     async def __call__(self, event: EmailEvent) -> None:
-        print(5555555555555)
-        return
         await self._cent_client.publish(
             request=PublishRequest(
-                channel=f'disp:demo',
+                channel='disp:demo',
                 data=event.model_dump(mode='json'),
             ),
         )

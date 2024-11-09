@@ -1,0 +1,17 @@
+{
+    "token_hmac_secret_key": "omsk.secret",
+    "api_key": "demo.api.key.2452139255718",
+    "admin_password": "demo.cent.pth",
+    "admin_secret": "55.secret.demo",
+    "admin": true,
+    "allowed_origins": ["*"],
+
+    "namespaces": [
+        {
+            "name": "disp",
+            "allow_subscribe_for_client": true,
+            "history_size": 30,
+            "history_ttl": "3600s"
+        }
+    ]
+}
