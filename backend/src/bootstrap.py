@@ -4,6 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from src.shared.swagger import swagger_plugin
+from src.shared.event_bus import event_bus_plugin
 from src.dispatching_requests import dispatching_requests_plugin
 from .app import App
 from .ioc import ioc
@@ -24,6 +25,7 @@ def bootstrap(
 
     # В приложение добавляются плагины -- процесс сборки
     app.add_plugin(swagger_plugin(settings.swagger))
+    app.add_plugin(event_bus_plugin())
     app.add_plugin(dispatching_requests_plugin(settings))
 
     # Определен жизненный цикл приложения
