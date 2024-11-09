@@ -1,7 +1,6 @@
 from typing import AsyncGenerator, get_type_hints
 
 from fastapi import FastAPI
-from pydantic import BaseModel
 from langgraph.graph import StateGraph
 from cent import AsyncClient
 
@@ -11,16 +10,10 @@ from src.shared.event_bus import IEventBus
 from .models import EmailEvent
 from .handlers import EmailEventHandler
 from .graph import State, graph_initialize
-from .web import HandleEmail
+from .web import HandleEmail, PredictEmail
 
 
 __all__ = ['dispatching_requests_plugin']
-
-
-class DispatcherRequest(BaseModel):
-    serial_number: str
-    type_of_equipment: str
-    fail_point: str
 
 
 async def dispatching_requests_plugin(settings: Settings) -> AsyncGenerator:
@@ -52,12 +45,21 @@ async def dispatching_requests_plugin(settings: Settings) -> AsyncGenerator:
     )
     fastapi.add_api_route(  # добавление ручки
         path='/email/handle',
-        name='Диспетчиризировать заявку',
-        # description='',
+        name='Диспетчиризировать обращение клиента',
         tags=['Email'],
         methods=['POST'],
         endpoint=handle_email_view.__call__,
         response_model=get_type_hints(handle_email_view.__call__)['return'],
+    )
+
+    predict_email_view = PredictEmail()
+    fastapi.add_api_route(
+        path='/email/predict',
+        name='Получить набор предсказаний для обращения клиента',
+        tags=['Email'],
+        methods=['POST'],
+        endpoint=predict_email_view.__call__,
+        response_model=get_type_hints(predict_email_view.__call__)['return'],
     )
 
     yield

@@ -37,8 +37,7 @@ def bootstrap(
 
     # теги для сваггера
     tags = [
-        {'name': 'QA', 'description': 'Вопросно-Ответная система'},
-        {'name': 'classification', 'description': 'Классификация'},
+        {'name': 'Email', 'description': 'Обращения клиентов'},
     ]
 
     fastapi = FastAPI(
