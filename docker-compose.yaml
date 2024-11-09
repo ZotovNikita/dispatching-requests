@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   dr_backend:
     build:
@@ -9,3 +11,24 @@ services:
       - "8558:${APP__PORT}"
     env_file:
       - ./backend/.env
+    networks:
+      - dr_network
+
+  dr_streamlit:
+    build:
+      context: .
+      dockerfile: ./Dockerfile.streamlit
+    container_name: dr_streamlit
+    restart: always
+    ports:
+      - "8501:8501"
+    env_file:
+      - ./frontend/.env
+    depends_on:
+      - dr_backend
+    networks:
+      - dr_network
+
+networks:
+  dr_network:
+    driver: bridge

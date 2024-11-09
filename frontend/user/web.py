@@ -31,16 +31,16 @@ def user():
         submit_button = st.form_submit_button(label="Отправить")
 
         if submit_button:
-            url = 'http://localhost:8558/message'
+            url = 'http://dr_backend:8558/message'
 
             data = {'title': user_subject, 'body': user_body}
             headers = {"Content-Type": "application/json"}
             response = requests.post(url, headers=headers, data=json.dumps(data)).json()
 
             st.session_state['chat_history_operator'].append(
-                {"sender": 'Попа', "subject": user_subject, "body": user_body,
+                {"sender": 'Пользователь', "subject": user_subject, "body": user_body,
                  "serial_number": response['serial_number'],
                  "type_of_equipment": response['type_of_equipment']})
 
             st.session_state['chat_history'].append(
-                {"sender": 'Попа', "subject": user_subject, "body": user_body})
+                {"sender": 'Пользователь', "subject": user_subject, "body": user_body})
