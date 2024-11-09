@@ -1,11 +1,11 @@
 import streamlit as st
-
 from operaor.web import operator
 from user.web import user
 
 
 def main():
     st.set_page_config(page_title="Диспечеризация заявок", layout="wide")
+
     st.markdown(
         """
         <style>
@@ -16,15 +16,27 @@ def main():
             width: 400px;
             margin-left: -400px;
         }
+        
+
         h3 {text-align: center;}
         h1 {
-        margin-bottom: 2%;
         padding-top: 0%;
+        }
+        .st-emotion-cache-12fmjuu {
+            background: #f27979;
+        }
+        .stLogo{
+        width:100%;
+        height: 5rem;
+        }
+        header{
+        color:white;
         }
         """,
         unsafe_allow_html=True,
     )
-    st.title("Чат с оператором")
+    st.logo('static/logo.svg',size="large")
+    st.title("Почта📪")
     st.markdown(
         """
         <style>
@@ -45,7 +57,7 @@ def main():
     col1, col2 = st.columns(2, gap="large")
     with col1:
         # Область для отображения сообщений
-        st.subheader("История чата")
+        st.subheader("Письма✉")
         user()
     with col2:
         operator()

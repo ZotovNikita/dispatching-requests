@@ -1,0 +1,13 @@
+[browser]
+serverAddress = "localhost"
+serverPort = 8501
+enableCORS = false
+
+[client]
+showSidebarNavigation = false
+
+
+[theme]
+base="light"
+secondaryBackgroundColor="#f6f0f0"
+textColor="#000000"
