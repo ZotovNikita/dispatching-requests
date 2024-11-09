@@ -1,10 +1,11 @@
 from typing import AsyncGenerator
 
+from fastapi import FastAPI
 from pydantic import BaseModel
+
 from src.ioc import ioc
 from src.settings import Settings
 
-from fastapi import FastAPI
 
 __all__ = ['dispatching_requests_plugin']
 
