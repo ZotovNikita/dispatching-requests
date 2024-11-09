@@ -38,12 +38,13 @@ def bootstrap(
     # теги для сваггера
     tags = [
         {'name': 'Email', 'description': 'Обращения клиентов'},
+        {'name': 'Predict', 'description': 'NLU'},
     ]
 
     fastapi = FastAPI(
         title=settings.app.title,
         lifespan=lifespan,
-        version='0.1.0',
+        version='1.0.0',
         # openapi_url='/openapi.json',
         openapi_tags=tags,
         redoc_url=None,
