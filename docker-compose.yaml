@@ -1,34 +1,62 @@
-version: '3.8'
-
 services:
-  dr_backend:
+  ollama:
+    volumes:
+      - ${LOCAL_OLLAMA_MODELS}:/opt/.ollama
+    container_name: ollama
+    pull_policy: always
+    tty: true
+    restart: always
+    image: ollama/ollama:latest
+    ports:
+      - ${OLLAMA_PORT}:11434
+    environment:
+      - OLLAMA_HOST=0.0.0.0:11434
+      - OLLAMA_MODELS=/opt/.ollama
+      - OLLAMA_ORIGINS=*
+    networks:
+      - sila-net
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+  backend:
     build:
       context: .
       dockerfile: ./Dockerfile
-    container_name: dr_backend
+    container_name: backend
     restart: always
     ports:
-      - "8558:${APP__PORT}"
+      - ${BACKEND_PORT}:${BACKEND_PORT}
+    environment:
+      - APP__TITLE=${BACKEND_TITLE}
+      - APP__HOST=${BACKEND_HOST}
+      - APP__PORT=${BACKEND_PORT}
     env_file:
-      - ./backend/.env
+      - .env
+    depends_on:
+      - ollama
     networks:
-      - dr_network
+      - sila-net
 
-  dr_streamlit:
+  streamlit:
     build:
       context: .
       dockerfile: ./Dockerfile.streamlit
-    container_name: dr_streamlit
+    container_name: streamlit
     restart: always
     ports:
-      - "8501:8501"
+      - ${FRONTEND_PORT}:8501
     env_file:
-      - ./frontend/.env
+      - .env
     depends_on:
-      - dr_backend
+      - backend
     networks:
-      - dr_network
+      - sila-net
 
 networks:
-  dr_network:
+  sila-net:
     driver: bridge

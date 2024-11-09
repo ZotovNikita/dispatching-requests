@@ -10,4 +10,4 @@ RUN pip install --no-cache-dir -r ./requirements.txt
 
 COPY ./backend .
 
-CMD ["python", "-m", "src"]
+CMD ["python3", "-m", "src"]
