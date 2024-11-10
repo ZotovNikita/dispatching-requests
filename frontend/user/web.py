@@ -35,7 +35,7 @@ def user():
         submit_button = st.form_submit_button(label="Отправить")
 
         if submit_button:
-            url = f'{path}/message'
+            url = f'{path}/email/handle'
 
             data = {'title': user_subject, 'body': user_body}
             headers = {"Content-Type": "application/json"}
