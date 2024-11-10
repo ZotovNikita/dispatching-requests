@@ -26,6 +26,7 @@ class AppSettings(BaseConfig):
     port: int
 
 
+# Настройки для подключения к серверу центрифуги
 class CentrifugoSettings(BaseConfig):
     api_url: str
     api_key: str

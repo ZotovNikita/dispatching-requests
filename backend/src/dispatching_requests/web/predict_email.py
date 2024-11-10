@@ -39,6 +39,7 @@ class PredictEmail:
         )
 
         return DispatchingResponse(
+            id=email.id,
             equipment_type=equipment_type,
             failure_point=failure_point,
             serial_numbers=serial_numbers,
