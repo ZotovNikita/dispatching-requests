@@ -4,7 +4,14 @@ from fastapi import File, UploadFile
 from fastapi.responses import StreamingResponse
 from io import BytesIO, StringIO
 
-from src.utils.nlu import generate_predictions_from_dataframe, model_embedding, tokenizer, model_classification_equipment_type
+from src.utils.nlu import (
+    generate_predictions_from_dataframe,
+    model_embedding,
+    tokenizer,
+    model_classification_equipment_type,
+    model_classification_failure_point,
+    label_encoder,
+)
 
 
 class PredictFile:
@@ -18,10 +25,17 @@ class PredictFile:
             data = BytesIO(content)
             csv = pd.read_csv(data)
 
-            preds = generate_predictions_from_dataframe(csv, model_embedding, tokenizer, model_classification_equipment_type)
+            preds = generate_predictions_from_dataframe(
+                df=csv,
+                model_embedding=model_embedding,
+                tokenizer=tokenizer,
+                cb_model=model_classification_equipment_type,
+                model_onnx=model_classification_failure_point,
+                label_encoder=label_encoder,
+            )
 
             stream = StringIO()
-            pd.DataFrame([preds]).T.to_csv(stream, index=False)
+            preds.to_csv(stream, index=False)
 
             return stream.getvalue()
 

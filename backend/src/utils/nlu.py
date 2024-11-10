@@ -6,6 +6,8 @@ import onnxruntime as ort
 from transformers import AutoTokenizer, AutoModel
 from sklearn.preprocessing import LabelEncoder
 
+from .ner import get_one_serial_number
+
 
 tokenizer = AutoTokenizer.from_pretrained('intfloat/multilingual-e5-large-instruct')
 model_embedding = AutoModel.from_pretrained('intfloat/multilingual-e5-large-instruct')
@@ -91,7 +93,7 @@ def generate_prediction_equipment_type(topic: str, description: str, model, toke
     return str(prediction[0][0])
 
 
-def generate_predictions_from_dataframe(df: pd.DataFrame, model, tokenizer, cb_model) -> pd.Series:
+def generate_predictions_from_dataframe(df: pd.DataFrame, model_embedding, tokenizer, cb_model, model_onnx: ort.InferenceSession, label_encoder) -> pd.DataFrame:
     ''' 
     Функция generate_predictions_from_dataframe генерирует предсказания для каждого 
     текста в DataFrame, используя предобученную модель и токенизатор.
@@ -105,7 +107,7 @@ def generate_predictions_from_dataframe(df: pd.DataFrame, model, tokenizer, cb_m
     - cb_model: Модель, используемая для генерации предсказаний на основе эмбеддингов.
 
     Возвращает:
-    - pd.Series: Серия с предсказанными классами для каждого текста в DataFrame.
+    - pd.DataFrame: Датафрейм с предсказанными классами для каждого текста в DataFrame.
 
     Процесс:
     1. Инициализируется пустой список для хранения предсказаний.
@@ -117,17 +119,26 @@ def generate_predictions_from_dataframe(df: pd.DataFrame, model, tokenizer, cb_m
        - Эмбеддинги нормализуются.
        - На основе нормализованных эмбеддингов генерируется предсказание с помощью cb_model.
        - Предсказание добавляется в список.
-    3. Возвращается серия с предсказанными классами.
+    3. Возвращается датафрейм с предсказанными классами.
     '''
     predictions = []
 
-    for index, row in df.iterrows():
-        embeddings = create_embeddings(row['Тема'], row['Описание'], model, tokenizer)
+    for _, row in df.iterrows():
+        embeddings = create_embeddings(row['Тема'], row['Описание'], model_embedding, tokenizer)
 
-        prediction = cb_model.predict(embeddings.numpy())
-        predictions.append(prediction[0][0])
+        prediction_cls1 = cb_model.predict(embeddings.numpy())
+        prediction_cls1 = prediction_cls1[0][0]
 
-    return pd.Series(predictions)
+        outputs = model_onnx.run(None, {'input': embeddings.reshape(1, 1, -1).numpy()})
+        pred = outputs[0].argmax(axis=1)
+        prediction_cls2 = label_encoder.inverse_transform(pred)
+        prediction_cls2 = prediction_cls2.item()
+
+        prediction_cls3 = get_one_serial_number(row['Тема'], row['Описание'])
+
+        predictions.append((prediction_cls1, prediction_cls2, prediction_cls3))
+
+    return pd.DataFrame(predictions, columns=['Тип оборудования', 'Точка отказа', 'Серийный номер'])
 
 
 def generate_prediction_failure_point(topic: str, description: str, model_embedding, tokenizer, model_onnx: ort.InferenceSession, label_encoder) -> str:
