@@ -14,7 +14,7 @@ git clone https://github.com/ZotovNikita/dispatching-requests.git
 cd dispatching-requests
 ```
 
-2. Переименовать файл `.env.example` в `.env` и указать в нем свои пути LOCAL_OLLAMA_MODELS и LOCAL_HUGGINGFACE_MODELS для сохранения языковой модели, если хотите изменить пути по умолчанию
+2. Переименовать файл `.env.example` в `.env` и указать в нем свои пути `LOCAL_OLLAMA_MODELS` и `LOCAL_HUGGINGFACE_MODELS` для сохранения языковой модели, если хотите изменить пути по умолчанию
 
 3. Собрать проект
 ```

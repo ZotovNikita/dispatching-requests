@@ -124,7 +124,7 @@ def generate_predictions_from_dataframe(df: pd.DataFrame, model_embedding, token
     predictions = []
 
     for _, row in df.iterrows():
-        embeddings = create_embeddings(row['Тема'], row['Описание'], model_embedding, tokenizer)
+        embeddings = create_embeddings(str(row['Тема']), str(row['Описание']), model_embedding, tokenizer)
 
         prediction_cls1 = cb_model.predict(embeddings.numpy())
         prediction_cls1 = prediction_cls1[0][0]
@@ -134,7 +134,7 @@ def generate_predictions_from_dataframe(df: pd.DataFrame, model_embedding, token
         prediction_cls2 = label_encoder.inverse_transform(pred)
         prediction_cls2 = prediction_cls2.item()
 
-        prediction_cls3 = get_one_serial_number(row['Тема'], row['Описание'])
+        prediction_cls3 = get_one_serial_number(str(row['Тема']), str(row['Описание']))
 
         predictions.append((prediction_cls1, prediction_cls2, prediction_cls3))
 

@@ -24,6 +24,7 @@ class PredictFile:
         def proccess(content: bytes) -> str:
             data = BytesIO(content)
             csv = pd.read_csv(data)
+            csv['Описание'] = csv['Описание'].str.replace('_x000D_', '', regex=False)
 
             preds = generate_predictions_from_dataframe(
                 df=csv,
@@ -35,7 +36,7 @@ class PredictFile:
             )
 
             stream = StringIO()
-            preds.to_csv(stream, index=False)
+            preds.to_csv(stream, index=True, index_label='index')
 
             return stream.getvalue()
 
