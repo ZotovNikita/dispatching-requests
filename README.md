@@ -31,5 +31,7 @@ docker-compose up -d
 docker exec -it ollama ollama pull gemma2:9b
 ```
 Swagger: http://localhost:8910/docs
+
 Frontend: http://localhost:8558/
+
 Centrifugo: http://localhost:8822/
