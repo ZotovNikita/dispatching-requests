@@ -42,21 +42,21 @@ def user():
             response = requests.post(url, headers=headers, data=json.dumps(data)).json()
 
             if response['serial_number_check_result']['success']:
-                serial_number_check_result = 'Проверка серийного номера успешна ✅'
+                serial_number_check_result = '✅ Проверка серийного номера успешна'
             else:
-                serial_number_check_result = 'Проверка серийного номера не удалась ❌: ' + \
+                serial_number_check_result = '❌ Проверка серийного номера не удалась:\n' + \
                                              response['serial_number_check_result']['text']
 
             if response['completeness_check_result']['success']:
-                completeness_check_result = 'Проверка полноты успешна ✅'
+                completeness_check_result = '✅ Проверка полноты успешна'
             else:
-                completeness_check_result = 'Проверка полноты не удалась ❌: ' + response['completeness_check_result'][
+                completeness_check_result = '❌ Проверка полноты не удалась:\n' + response['completeness_check_result'][
                     'text']
 
             if response['equipment_name_check_result']['success']:
-                equipment_name_check_result = 'Наименование модели найдено ✅'
+                equipment_name_check_result = '✅ Наименование модели найдено'
             else:
-                equipment_name_check_result = 'Не удалось найти название модели ❌: ' + \
+                equipment_name_check_result = '❌ Не удалось найти название модели: \n' + \
                                               response['equipment_name_check_result']['text']
 
             if response['type'] == 'to_agent':
@@ -69,7 +69,7 @@ def user():
 
             st.session_state['chat_history'].append(
                 {
-                    "sender": 'Bot🤖',
+                    "sender": 'Bot🤖 \n',
                     "serial_number_check_result": serial_number_check_result,
                     "completeness_check_result": completeness_check_result,
                     "equipment_name_check_result": equipment_name_check_result
