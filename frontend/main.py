@@ -36,7 +36,7 @@ def main():
         unsafe_allow_html=True,
     )
     st.logo('static/logo.svg',size="large")
-    st.title("Почта📪")
+    st.title("Почта 📪")
     st.markdown(
         """
         <style>
@@ -57,7 +57,7 @@ def main():
     col1, col2 = st.columns(2, gap="large")
     with col1:
         # Область для отображения сообщений
-        st.subheader("Письма✉")
+        st.subheader("Письма от модели ✉")
         user()
     with col2:
         operator()
