@@ -4,8 +4,7 @@ from itertools import chain
 
 
 _DEFAULT_PATTERNS = [
-    r'\b[A-Za-zА-Яа-я]\d{9}\b(?:\([^\)]*\))?',
-    r'\b[A-Za-zА-Яа-я]{3}\d{11}\b(?:\([^\)]*\))?',
+    r'\b[A-Za-zА-Яа-я]{1,4}\d{7,14}\b(?:\([^\)]*\))?',
 ]
 
 
