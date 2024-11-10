@@ -1,6 +1,8 @@
-# dispatching-requests
+# Автоматическая диспетчеризация заявок
 
-Запуск осуществлялся с Windows 11 (R5 5600, 32GB RAM, RTX 4060ti).
+Запуск осуществлялся на Windows 11 (R5 5600, 32GB RAM, RTX 4060ti).
+
+На вашем компьютере должен быть установлен docker desktop (можно скачать по ссылке https://www.docker.com/products/docker-desktop/).
 
 0. Склонировать данный репозиторий
 ```
@@ -28,5 +30,6 @@ docker-compose up -d
 ```
 docker exec -it ollama ollama pull gemma2:9b
 ```
-
 Swagger: http://localhost:8910/docs
+Frontend: http://localhost:8558/
+Centrifugo: http://localhost:8822/
