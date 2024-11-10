@@ -10,7 +10,7 @@ from src.shared.event_bus import IEventBus
 from .models import EmailEvent
 from .handlers import EmailEventHandler
 from .graph import State, graph_initialize
-from .web import HandleEmail, PredictEmail, PredictEquipmentType, PredictFailurePoint
+from .web import HandleEmail, PredictEmail, PredictEquipmentType, PredictFailurePoint, PredictFile
 
 
 __all__ = ['dispatching_requests_plugin']
@@ -80,6 +80,16 @@ async def dispatching_requests_plugin(settings: Settings) -> AsyncGenerator:
         methods=['POST'],
         endpoint=predict_failure_point_view.__call__,
         response_model=get_type_hints(predict_failure_point_view.__call__)['return'],
+    )
+
+    predict_file_view = PredictFile()
+    fastapi.add_api_route(
+        path='/predict/file',
+        name='Получить предсказания по данным из файла csv',
+        tags=['Predict'],
+        methods=['POST'],
+        endpoint=predict_file_view.__call__,
+        response_model=get_type_hints(predict_file_view.__call__)['return'],
     )
 
     yield
